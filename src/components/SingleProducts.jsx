@@ -10,7 +10,6 @@ const SingleProducts = () => {
 
     useEffect(() => {
         prod();
-        // console.log(showProduct.images);
     }, [id]);
 
     async function prod() {
