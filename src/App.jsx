@@ -42,7 +42,7 @@ function App() {
         <Route path="/" element={<h1 className="text-center text-5xl">This is Home page</h1>} />
         <Route path="products">
           <Route index element={<Product />} />
-          <Route path=":id" element={<SingleProducts />} />
+          <Route path=":productId" element={<SingleProducts />} />
         </Route>
       </Routes>
     </>

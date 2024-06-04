@@ -1,25 +1,27 @@
 import { Link, Router } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useEffect, useState } from "react";
+import useFetcher from "../hooks/useFetcher";
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState(() => {
+    const savedOffset = sessionStorage.getItem('sessionPageNumber');
+    return savedOffset !== null ? JSON.parse(savedOffset) : 1;
+  });
   const [limit, setLimit] = useState(12);
-
-  useEffect(() => {
-    console.log(products);
-    prod();
-  }, [offset, limit]);
-
-  async function prod() {
-    try {
-      const result = await fetch(
-        `https://api.escuelajs.co/api/v1/products?offset=${offset}&limit=${limit}`
-      ).then((res) => res.json());
-      setProducts(result);
-    } catch (err) {
-      console.log(err);
-    }
+  
+  
+  const { showProduct, isLoading} = useFetcher(
+    `products?offset=${offset}&limit=${limit}`
+  );
+  const products = showProduct;
+  
+  useEffect(()=>{
+      sessionStorage.removeItem('sessionPageNumber')
+  },[offset])
+  
+  
+  function offsetHandle() {
+    sessionStorage.setItem('sessionPageNumber', JSON.stringify(offset));
   }
 
   function nextClick() {
@@ -34,6 +36,14 @@ const Products = () => {
     return url.replace(/[\[\]"]/g, "");
   }
 
+  if (isLoading) {
+    return (
+      <h1 className="text-black m-auto w-5 text-4xl text-center font-semibold">
+        Loading...
+      </h1>
+    );
+  }
+
   return (
     <>
       <div className="container mx-auto" id="container">
@@ -42,9 +52,9 @@ const Products = () => {
         </h1>
 
         <div className={` grid grid-cols-4 gap-1`}>
-          {products.length <= 0 ? (
+          {!isLoading && products.length <= 0 ? (
             <h1 className=" col-span-full text-center my-40 text-4xl ">
-              There is no more products.
+              There are no more products avilable.
             </h1>
           ) : (
             products &&
@@ -53,6 +63,7 @@ const Products = () => {
                 <img src={cleanUrl(product.images[0])} alt="" />
                 <div className="p-3">
                   <Link
+                    onClick={()=>{offsetHandle()}}
                     className="text-blue-600 font-semibold hover:text-blue-500"
                     to={`/products/${product.id}`}
                   >
