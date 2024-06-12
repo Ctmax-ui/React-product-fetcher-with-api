@@ -4,8 +4,8 @@ import useFetcher from "../hooks/useFetcher";
 
 const Products = () => {
   const [offset, setOffset] = useState(() => {
-    const savedOffset = sessionStorage.getItem('sessionPageNumber');
-    return savedOffset !== null ? JSON.parse(savedOffset) : 1;
+      const savedOffset = sessionStorage.getItem('sessionPageNumber');
+      return savedOffset !== null ? JSON.parse(savedOffset) : 1;
   });
   const [limit, setLimit] = useState(12);
   
